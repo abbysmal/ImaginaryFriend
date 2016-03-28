@@ -1,0 +1,14 @@
+OASISFormat: 0.4
+Name:        imaginaryfriend
+Version:     0.1
+Synopsis:    A Irmin-backed logger IRC bot
+Authors:     Enguerrand Decorne
+License:     MIT
+AlphaFeatures: ocamlbuild_more_args
+XOCamlbuildExtraArgs: -cflag -g
+
+Executable cotton
+  Path:       .
+  BuildTools: ocamlbuild
+  MainIs:     src/main.ml
+  BuildDepends: irmin.unix, lwt.unix, lwt.react, irc-client, irc-client.unix, irc-client.lwt, lwt, re.str, cmdliner, calendar

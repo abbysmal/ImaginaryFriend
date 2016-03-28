@@ -1,0 +1,11 @@
+PKG irc-client.unix
+PKG re.str
+PKG lwt
+PKG lwt.unit
+PKG lwt.react
+PKG cmdliner
+PKG calendar
+PKG irmin.unix
+
+S src
+S .
