@@ -18,16 +18,14 @@ let update ((v : rs), (f : rf)) connection action =
 				logs = (List.append model.logs [new_line]);
 				participants} in
      f new_log
-  | `Help ->
-     f { model with state = Helping }
-  | `Quit ->
-     f { model with state = Quiting }
+  | `Help -> f { model with state = Helping }
+  | `Quit -> f { model with state = Quiting }
   | `Saving msg ->
      let content = canopy_writer model in
      let state = Saving (msg, content) in
      f { model with state; logs = []; participants = SS.empty;}
 
-let callback (r : rp) connection result =
+let callback (r : rp) _ connection result =
   let open Irc_message in
   let open Parse in
   match result with
@@ -57,14 +55,16 @@ let lwt_main server port channel nick message git_root logs_folder =
 		  match m.state with
 		  | Helping -> display_help m connection
 		  | Logging -> Lwt.return_unit
-		  | Saving (msg, content) -> save_to_store m msg content
+		  | Saving (msg, content) ->
+		     save_to_store m msg content
+		     >>= fun () -> Irc.send_privmsg ~connection ~target:channel ~message:"done"
 		  | Quiting -> Irc_client_lwt.send_quit ~connection in
 
 		let model = { state = Logging; participants = SS.empty;
 			      logs = []; nick; channel; git_root; logs_folder} in
 		let (v, f) = Lwt_react.S.create model in
-		let callback = callback (v, f) in
-		Lwt_react.S.map_s signal_map_fn v >>= fun _ ->
+		let rp = Lwt_react.S.map_s signal_map_fn v in
+		let callback = callback (v, f) rp in
 		Irc.listen ~connection ~callback
   >>= fun () -> Irc.send_quit ~connection
 
