@@ -35,6 +35,26 @@ module S =
 
 let config_store root = Irmin_git.config ~root ~bare:true ()
 
+let header m =
+  let participants = "participants: " ^ (String.concat "," (SS.elements m.participants)) in
+  let author = "author: Irc Bot" in
+  let title = "title: Irc discussions from" in
+  let tags = "tags: irc,log" in
+  Printf.sprintf {|---
+%s
+%s
+%s
+%s
+---
+|} participants author title tags
+
+let canopy_writer m =
+  let format_line line =
+    let date = CalendarLib.Printer.Calendar.sprint "%d-%m-%Y %H:%M" line.timestamp in
+    Printf.sprintf "<%s> <%s>: %s\n" date line.author line.content in
+  let content = List.fold_left (fun a b -> a ^ (format_line b) ) "" m.logs in
+  (header m) ^ content
+
 let save_to_store m msg content =
   let config = config_store m.git_root in
   S.Repo.create config

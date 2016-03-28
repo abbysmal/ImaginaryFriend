@@ -23,10 +23,7 @@ let update ((v : rs), (f : rf)) connection action =
   | `Quit ->
      f { model with state = Quiting }
   | `Saving msg ->
-     let format_line line =
-       let date = CalendarLib.Printer.Calendar.sprint "%d-%m-%Y" line.timestamp in
-       Printf.sprintf "%s %s %s\n" date line.author line.content in
-     let content = List.fold_left (fun a b -> a ^ (format_line b))  "" model.logs in
+     let content = canopy_writer model in
      let state = Saving (msg, content) in
      f { model with state; logs = []; participants = SS.empty;}
 
