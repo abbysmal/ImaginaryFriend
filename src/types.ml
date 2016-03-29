@@ -38,7 +38,6 @@ let config_store root = Irmin_git.config ~root ~bare:true ()
 let header m =
   let participants = "participants: " ^ (String.concat "," (SS.elements m.participants)) in
   let author = "author: Irc Bot" in
-  let content = "content: irclog" in
   let title = "title: Irc discussions from" in
   let tags = "tags: irc,log" in
   Printf.sprintf {|---
@@ -46,16 +45,22 @@ let header m =
 %s
 %s
 %s
-%s
 ---
-|} participants author title tags content
+|} participants author title tags
 
 let canopy_writer m =
+  let rec content_highlight content = function
+    | [] -> content
+    | participant::participants ->
+       let highlighted = Printf.sprintf "`%s`" participant in
+       let re = Printf.sprintf "\\(%s\\)" participant |> Re_str.regexp in
+       content_highlight (Re_str.global_replace re highlighted content) participants in
   let format_line line =
     let date = CalendarLib.Printer.Calendar.sprint "%d-%m-%Y %H:%M" line.timestamp in
-    Printf.sprintf "<%s> <%s>: %s\n" date line.author line.content in
+    Printf.sprintf "`%s`   %s   %s\n\n" date line.author line.content in
   let content = List.fold_left (fun a b -> a ^ (format_line b) ) "" m.logs in
-  (header m) ^ content
+  let content_hl = content_highlight content (SS.elements m.participants) in
+  (header m) ^ content_hl
 
 let save_to_store m msg content =
   let config = config_store m.git_root in
