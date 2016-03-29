@@ -1,8 +1,9 @@
 open Types
 
 let get_nick msg =
-  let reg = Re_str.regexp ":\\(.*\\)!.*" in
+  let reg = Re_str.regexp ":\\(.*\\)!.*@*.PRIVMSG.*" in
   let _ = Re_str.string_match reg msg 0 in
+
   Re_str.matched_group 1 msg
 
 let get_commit_msg content =

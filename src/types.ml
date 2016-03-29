@@ -12,7 +12,7 @@ type line =
 type state =
   | Logging
   | Helping
-  | Saving of (string * string)
+  | Saving of (string * string * string)
   | Quiting
 
 type model =
@@ -35,10 +35,10 @@ module S =
 
 let config_store root = Irmin_git.config ~root ~bare:true ()
 
-let header m =
+let header date m =
   let participants = "participants: " ^ (String.concat "," (SS.elements m.participants)) in
-  let author = "author: Irc Bot" in
-  let title = "title: Irc discussions from" in
+  let author = "author: " ^ m.nick in
+  let title = Printf.sprintf "title: Irc discussions from %s on %s" m.channel date in
   let tags = "tags: irc,log" in
   Printf.sprintf {|---
 %s
@@ -48,7 +48,7 @@ let header m =
 ---
 |} participants author title tags
 
-let canopy_writer m =
+let canopy_writer date m =
   let rec content_highlight content = function
     | [] -> content
     | participant::participants ->
@@ -60,20 +60,18 @@ let canopy_writer m =
     Printf.sprintf "`%s`   %s   %s\n\n" date line.author line.content in
   let content = List.fold_left (fun a b -> a ^ (format_line b) ) "" m.logs in
   let content_hl = content_highlight content (SS.elements m.participants) in
-  (header m) ^ content_hl
+  (header date m) ^ content_hl
 
-let save_to_store m msg content =
+let save_to_store m msg content date =
   let config = config_store m.git_root in
   S.Repo.create config
   >>= S.master task
   >>= fun t ->
-  let timestamp = Unix.gettimeofday () |> CalendarLib.Calendar.from_unixfloat in
-  let filename = CalendarLib.Printer.Calendar.sprint "%d-%m-%Y"timestamp in
-  S.update (t msg) [m.logs_folder;filename] content
+  S.update (t msg) [m.logs_folder;date] content
 
 let help_msg =
   ["The following commands are accepted:";
-   "commit filetag commit_msg: will commit the stored conversation to the file $path/timestam-tag with message commit_msg";
+   "commit: commit_msg: will commit the stored conversation to the file $path/timestam-tag with message commit_msg";
    "bye: I will promptly exit the channel";
    "help: Display this message again"
   ]

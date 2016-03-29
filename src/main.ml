@@ -21,8 +21,10 @@ let update ((v : rs), (f : rf)) connection action =
   | `Help -> f { model with state = Helping }
   | `Quit -> f { model with state = Quiting }
   | `Saving msg ->
-     let content = canopy_writer model in
-     let state = Saving (msg, content) in
+     let timestamp = Unix.gettimeofday () |> CalendarLib.Calendar.from_unixfloat in
+     let date = CalendarLib.Printer.Calendar.sprint "%d-%m-%Y" timestamp in
+     let content = canopy_writer date model in
+     let state = Saving (msg, content, date) in
      f { model with state; logs = []; participants = SS.empty;}
 
 let callback (r : rp) _ connection result =
@@ -55,8 +57,8 @@ let lwt_main server port channel nick message git_root logs_folder =
 		  match m.state with
 		  | Helping -> display_help m connection
 		  | Logging -> Lwt.return_unit
-		  | Saving (msg, content) ->
-		     save_to_store m msg content
+		  | Saving (msg, content, date) ->
+		     save_to_store m msg content date
 		     >>= fun () -> Irc.send_privmsg ~connection ~target:channel ~message:"done"
 		  | Quiting -> Irc_client_lwt.send_quit ~connection in
 
