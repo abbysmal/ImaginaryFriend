@@ -1,0 +1,29 @@
+opam-version: "1.2"
+name: "imaginaryfriend"
+version: "dev"
+author: "Enguerrand Decorne"
+maintainer: "Enguerrand Decorne"
+build: [
+    ["oasis" "setup"]
+    ["ocaml" "setup.ml" "-configure"]
+    ["ocaml" "setup.ml" "-build"]
+]
+install: [
+    ["ocaml" "setup.ml" "-install"]
+]
+remove: [
+    ["ocaml" "setup.ml" "-uninstall"]
+]
+depends: [
+    "ocamlfind" {build}
+    "oasis" {build}
+    "irc-client"
+    "re"
+    "lwt"
+    "react"
+    "cmdliner"
+    "calendar"
+]
+homepage: "https://github.com/Engil/ImaginaryFriend"
+dev-repo: "https://github.com/Engil/ImaginaryFriend.git"
+bug-reports: "none"

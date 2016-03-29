@@ -7,7 +7,7 @@ License:     MIT
 AlphaFeatures: ocamlbuild_more_args
 XOCamlbuildExtraArgs: -cflag -g
 
-Executable cotton
+Executable imaginaryfriend
   Path:       .
   BuildTools: ocamlbuild
   MainIs:     src/main.ml
