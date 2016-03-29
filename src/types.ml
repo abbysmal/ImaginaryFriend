@@ -38,6 +38,7 @@ let config_store root = Irmin_git.config ~root ~bare:true ()
 let header m =
   let participants = "participants: " ^ (String.concat "," (SS.elements m.participants)) in
   let author = "author: Irc Bot" in
+  let content = "content: irclog" in
   let title = "title: Irc discussions from" in
   let tags = "tags: irc,log" in
   Printf.sprintf {|---
@@ -45,8 +46,9 @@ let header m =
 %s
 %s
 %s
+%s
 ---
-|} participants author title tags
+|} participants author title tags content
 
 let canopy_writer m =
   let format_line line =
