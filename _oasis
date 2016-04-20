@@ -11,4 +11,4 @@ Executable imaginaryfriend
   Path:       .
   BuildTools: ocamlbuild
   MainIs:     src/main.ml
-  BuildDepends: irmin.unix, lwt.unix, lwt.react, irc-client, irc-client.unix, irc-client.lwt, lwt, re.str, cmdliner, calendar
+  BuildDepends: omd, irmin.unix, lwt.unix, lwt.react, irc-client, irc-client.unix, irc-client.lwt, lwt, re.str, cmdliner, calendar

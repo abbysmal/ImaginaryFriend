@@ -6,6 +6,7 @@ PKG lwt.react
 PKG cmdliner
 PKG calendar
 PKG irmin.unix
+PKG omd
 
 S src
 S .

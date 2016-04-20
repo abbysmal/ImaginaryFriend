@@ -48,16 +48,20 @@ let header date m =
 ---
 |} participants author title tags
 
+let emph_markdown text =
+  [Omd.Code ("", text)] |> Omd.to_markdown
+
 let canopy_writer date m =
   let rec content_highlight content = function
     | [] -> content
     | participant::participants ->
-       let highlighted = Printf.sprintf "`%s`" participant in
+       let highlighted = emph_markdown participant in
        let re = Printf.sprintf "\\(%s\\)" participant |> Re_str.regexp in
        content_highlight (Re_str.global_replace re highlighted content) participants in
   let format_line line =
     let date = CalendarLib.Printer.Calendar.sprint "%d-%m-%Y %H:%M" line.timestamp in
-    Printf.sprintf "`%s`   %s   %s\n\n" date line.author line.content in
+    let author = emph_markdown line.author in
+    Printf.sprintf "%s   %s   %s\n\n" date author line.content in
   let content = List.fold_left (fun a b -> a ^ (format_line b) ) "" m.logs in
   let content_hl = content_highlight content (SS.elements m.participants) in
   (header date m) ^ content_hl
