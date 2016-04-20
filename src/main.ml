@@ -35,9 +35,9 @@ let callback (r : rp) _ connection result =
      begin
        match msg.command with
        | PRIVMSG (_, content) ->
-	  let author = get_nick (to_string msg) in
-	  let action = parse_content r connection author content in
-	  update r connection action |> Lwt.return
+         let author = get_nick (to_string msg) in
+         let action = parse_content r connection author content in
+         update r connection action |> Lwt.return
        | _ -> Lwt.return_unit
      end
     | `Error e ->

@@ -23,6 +23,7 @@ depends: [
     "react"
     "cmdliner"
     "calendar"
+    "omd"
 ]
 homepage: "https://github.com/Engil/ImaginaryFriend"
 dev-repo: "https://github.com/Engil/ImaginaryFriend.git"

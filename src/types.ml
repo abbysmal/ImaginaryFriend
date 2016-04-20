@@ -59,9 +59,8 @@ let canopy_writer date m =
        let re = Printf.sprintf "\\(%s\\)" participant |> Re_str.regexp in
        content_highlight (Re_str.global_replace re highlighted content) participants in
   let format_line line =
-    let date = CalendarLib.Printer.Calendar.sprint "%d-%m-%Y %H:%M" line.timestamp in
-    let author = emph_markdown line.author in
-    Printf.sprintf "%s   %s   %s\n\n" date author line.content in
+    let date = emph_markdown @@ CalendarLib.Printer.Calendar.sprint "%d-%m-%Y %H:%M" line.timestamp in
+    Printf.sprintf "%s   %s   %s\n\n" date line.author line.content in
   let content = List.fold_left (fun a b -> a ^ (format_line b) ) "" m.logs in
   let content_hl = content_highlight content (SS.elements m.participants) in
   (header date m) ^ content_hl
