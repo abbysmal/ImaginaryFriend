@@ -17,7 +17,7 @@ let match_word word msg =
 
 let match_action msg =
   let soh = Char.chr 1 in
-  let reg = Re_str.regexp (Printf.sprintf ".*%c\\(.*\\) \\(.*\\)%c" soh soh) in
+  let reg = Re_str.regexp (Printf.sprintf ".*%c\\(ACTION\\) \\(.*\\)%c" soh soh) in
   if Re_str.string_match reg msg 0 then
     Some (Re_str.matched_group 1 msg, Re_str.matched_group 2 msg)
   else
